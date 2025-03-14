@@ -1,7 +1,8 @@
 import { envs } from './configuration';
+import { Logger } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
-import { Logger } from '@nestjs/common';
+import { RpcCustomExceptionFilter } from './commons/exceptions/rpc-exception.filter';
 
 const logger = new Logger('RepartiX main gateway');
 
@@ -11,6 +12,9 @@ async function bootstrap() {
 
   // set prefix
   app.setGlobalPrefix('api');
+
+  // filters
+  app.useGlobalFilters(new RpcCustomExceptionFilter());
 
   // listem
   await app.listen(envs.port);

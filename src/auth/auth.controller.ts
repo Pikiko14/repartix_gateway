@@ -1,6 +1,6 @@
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { BadRequestException, Body, Controller, Inject, Post, Put } from '@nestjs/common';
 
 @Controller('auth')
@@ -17,7 +17,7 @@ export class AuthController {
       );
       return user;
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new RpcException(error);
     }
   }
 
@@ -29,7 +29,7 @@ export class AuthController {
       );
       return user;
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new RpcException(error);
     }
   }
 
@@ -41,7 +41,7 @@ export class AuthController {
       );
       return user;
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new RpcException(error);
     }
   }
 
@@ -53,7 +53,7 @@ export class AuthController {
       );
       return user;
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new RpcException(error);
     }
   }
 }
