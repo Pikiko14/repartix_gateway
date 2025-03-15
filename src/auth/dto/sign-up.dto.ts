@@ -15,9 +15,11 @@ export class SignUpDto extends SignInDto {
   @IsNotEmpty()
   email: string;
 
+  @IsOptional()
   @IsArray()
   scopes: string[];
 
+  @IsOptional()
   @IsObject()
   @ValidateNested()
   @Type(() => ProfileDto)

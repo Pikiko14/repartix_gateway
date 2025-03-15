@@ -1,8 +1,8 @@
-import { IsString, Max, IsOptional, IsNumber } from 'class-validator';
+import { IsString, MaxLength, IsOptional, IsNumber } from 'class-validator';
 
 export class ProfileDto {
   @IsString()
-  @Max(60)
+  @MaxLength(60)
   full_name: string;
 
   @IsOptional()

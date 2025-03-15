@@ -22,7 +22,6 @@ export class AuthController {
   @Post('/sign-up')
   async doSignUp(@Body() body: SignUpDto) {
     try {
-      console.log(body);
       const user = await firstValueFrom(
         this.authClient.send({ cmd: 'do_sign_up' }, body),
       );
