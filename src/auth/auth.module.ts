@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { envs } from 'src/configuration';
 import { AuthController } from './auth.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { envs } from 'src/configuration';
 
 @Module({
   imports: [

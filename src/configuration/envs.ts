@@ -7,6 +7,7 @@ interface EnvVars {
   AUTH_PORT: string;
   AUTH_HOST: string;
   AUTH_SERVICE: string;
+  PLAN_PORT: string;
   PLAN_HOST: string;
   PLAN_SERVICE: string;
 }
@@ -18,6 +19,7 @@ const envsSchema = joi.object({
   AUTH_HOST: joi.string().required(),
   AUTH_SERVICE: joi.string().required(),
   PLAN_HOST: joi.string().required(),
+  PLAN_PORT: joi.string().required(),
   PLAN_SERVICE: joi.string().required(),
 })
 .unknown(true);
@@ -40,6 +42,7 @@ export const envs = {
   auth_service_port: envVars.AUTH_PORT,
   auth_service_host: envVars.AUTH_HOST,
   auth_services_name: envVars.AUTH_SERVICE,
-  plan_host: envVars.PLAN_HOST,
-  plan_service: envVars.PLAN_SERVICE,
+  plan_service_host: envVars.PLAN_HOST,
+  plan_service_port: envVars.PLAN_PORT,
+  plan_service_service: envVars.PLAN_SERVICE,
 }

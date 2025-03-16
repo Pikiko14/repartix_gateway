@@ -1,35 +1,34 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { PlansService } from './plans.service';
 import { CreatePlanDto } from './dto/create-plan.dto';
 import { UpdatePlanDto } from './dto/update-plan.dto';
 
 @Controller()
 export class PlansController {
-  constructor(private readonly plansService: PlansService) {}
+  constructor() {}
 
   @MessagePattern('createPlan')
   create(@Payload() createPlanDto: CreatePlanDto) {
-    return this.plansService.create(createPlanDto);
+    return '';
   }
 
   @MessagePattern('findAllPlans')
   findAll() {
-    return this.plansService.findAll();
+    return '';
   }
 
   @MessagePattern('findOnePlan')
   findOne(@Payload() id: number) {
-    return this.plansService.findOne(id);
+    return '';
   }
 
   @MessagePattern('updatePlan')
   update(@Payload() updatePlanDto: UpdatePlanDto) {
-    return this.plansService.update(updatePlanDto.id, updatePlanDto);
+    return '';
   }
 
   @MessagePattern('removePlan')
   remove(@Payload() id: number) {
-    return this.plansService.remove(id);
+    return '';
   }
 }
