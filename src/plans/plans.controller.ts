@@ -1,34 +1,28 @@
-import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import {
+  ClientProxy,
+  Payload,
+  RpcException,
+} from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
+import { envs } from 'src/configuration';
 import { CreatePlanDto } from './dto/create-plan.dto';
-import { UpdatePlanDto } from './dto/update-plan.dto';
+import { Controller, Inject, Post } from '@nestjs/common';
 
-@Controller()
+@Controller('plans')
 export class PlansController {
-  constructor() {}
+  constructor(
+    @Inject(envs.plan_service_service) private readonly plansClient: ClientProxy,
+  ) {}
 
-  @MessagePattern('createPlan')
-  create(@Payload() createPlanDto: CreatePlanDto) {
-    return '';
-  }
-
-  @MessagePattern('findAllPlans')
-  findAll() {
-    return '';
-  }
-
-  @MessagePattern('findOnePlan')
-  findOne(@Payload() id: number) {
-    return '';
-  }
-
-  @MessagePattern('updatePlan')
-  update(@Payload() updatePlanDto: UpdatePlanDto) {
-    return '';
-  }
-
-  @MessagePattern('removePlan')
-  remove(@Payload() id: number) {
-    return '';
+  @Post('/')
+  async create(@Payload() createPlanDto: CreatePlanDto) {
+    try {
+      const plan = await firstValueFrom(
+        this.plansClient.send({ cmd: 'createPlan' }, createPlanDto),
+      );
+      return plan;
+    } catch (error) {
+      throw new RpcException(error);
+    }
   }
 }
