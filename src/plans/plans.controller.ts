@@ -6,7 +6,8 @@ import {
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
 import { CreatePlanDto } from './dto/create-plan.dto';
-import { Controller, Inject, Post } from '@nestjs/common';
+import { AuthGuard } from 'src/commons/guards/auth.guard';
+import { Controller, Inject, Post, UseGuards } from '@nestjs/common';
 
 @Controller('plans')
 export class PlansController {
@@ -15,6 +16,7 @@ export class PlansController {
   ) {}
 
   @Post('/')
+  @UseGuards(AuthGuard)
   async create(@Payload() createPlanDto: CreatePlanDto) {
     try {
       const plan = await firstValueFrom(
