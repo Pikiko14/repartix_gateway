@@ -7,6 +7,8 @@ import {
   Query,
   Delete,
   Param,
+  Put,
+  Body,
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
@@ -17,6 +19,7 @@ import { PaginationDto } from 'src/commons/dto/pagination.dto';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { ClientProxy, Payload, RpcException } from '@nestjs/microservices';
 import { PlanIdDto } from './dto/pland-id.dto';
+import { UpdatePlanDto } from './dto/update-plan.dto';
 
 @Controller('plans')
 export class PlansController {
@@ -58,6 +61,21 @@ export class PlansController {
     try {
       const plan = await firstValueFrom(
         this.plansClient.send({ cmd: 'deletePlan' }, planIdDto.id),
+      );
+      return plan;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Put('/:id')
+  @Scopes('update-plan')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async updateOne(@Param() planIdDto: PlanIdDto, @Body() updatePlanDto: UpdatePlanDto) {
+    try {
+      updatePlanDto.id = planIdDto.id;
+      const plan = await firstValueFrom(
+        this.plansClient.send({ cmd: 'updatePlan' }, updatePlanDto),
       );
       return plan;
     } catch (error) {
