@@ -18,5 +18,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   ],
   controllers: [PlansController],
   providers: [],
+  exports: [ClientsModule],
 })
 export class PlansModule {}
