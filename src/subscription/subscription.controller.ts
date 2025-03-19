@@ -22,4 +22,16 @@ export class SubscriptionController {
       throw new RpcException(error);
     }
   }
+
+  @Post('payment-webhook')
+  async validatePayment(@Body() paymentBody: any) {
+    try {
+      const subscription = await firstValueFrom(
+        this.plansClient.send({ cmd: 'validatePayment' }, paymentBody),
+      );
+      return subscription;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
 }
