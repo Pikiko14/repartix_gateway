@@ -4,6 +4,7 @@ import {
   IsMongoId,
   IsNotEmpty,
   IsObject,
+  IsOptional,
   ValidateNested,
 } from 'class-validator';
 import { UserSubscriptionDto } from './user-subscription.dto';
@@ -28,4 +29,7 @@ export class CreateSubscriptionDto {
   @IsNotEmpty()
   @IsEnum(PeriodEnum)
   period: PeriodEnum;
+
+  @IsOptional()
+  paymentMethods?: string;
 }
