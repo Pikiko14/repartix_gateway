@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { PlansModule } from './plans/plans.module';
+import { NatsModule } from './transports/nats.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 
 @Module({
@@ -15,6 +16,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
       signOptions: { expiresIn: '1d' },
     }),
     SubscriptionModule,
+    NatsModule,
   ],
   controllers: [],
   providers: [],

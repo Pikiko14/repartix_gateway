@@ -1,19 +1,10 @@
 import { Module } from '@nestjs/common';
-import { envs } from 'src/configuration';
 import { AuthController } from './auth.controller';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { NatsModule } from 'src/transports/nats.module';
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: envs.nats_service_name,
-        transport: Transport.NATS,
-        options: {
-          servers: [envs.nats_server],
-        }
-      },
-    ]),
+    NatsModule
   ],
   controllers: [AuthController],
   providers: [],
