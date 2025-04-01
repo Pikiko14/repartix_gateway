@@ -1,8 +1,9 @@
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
+import { AuthGuard } from 'src/commons/guards/auth.guard';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { Controller, Post, Body, Inject } from '@nestjs/common';
+import { Controller, Post, Body, Inject, UseGuards } from '@nestjs/common';
 
 @Controller('subscription')
 export class SubscriptionController {
@@ -12,6 +13,7 @@ export class SubscriptionController {
   ) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   async create(@Body() createSubscriptionDto: CreateSubscriptionDto) {
     try {
       const subscription = await firstValueFrom(
