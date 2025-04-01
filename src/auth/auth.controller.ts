@@ -16,14 +16,14 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 @Controller('auth')
 export class AuthController {
   constructor(
-    @Inject(envs.auth_services_name) private readonly authClient: ClientProxy,
+    @Inject(envs.nats_service_name) private readonly client: ClientProxy,
   ) {}
 
   @Post('/sign-up')
   async doSignUp(@Body() body: SignUpDto) {
     try {
       const user = await firstValueFrom(
-        this.authClient.send({ cmd: 'do_sign_up' }, body),
+        this.client.send({ cmd: 'do_sign_up' }, body),
       );
       return user;
     } catch (error) {
@@ -35,7 +35,7 @@ export class AuthController {
   async doSignIn(@Body() body: SignInDto) {
     try {
       const user = await firstValueFrom(
-        this.authClient.send({ cmd: 'do_sign_in' }, body),
+        this.client.send({ cmd: 'do_sign_in' }, body),
       );
       return user;
     } catch (error) {
@@ -47,7 +47,7 @@ export class AuthController {
   async doRecoveryPassword(@Body() body: RecoveryPasswordDto) {
     try {
       const user = await firstValueFrom(
-        this.authClient.send({ cmd: 'do_recovery_password' }, body),
+        this.client.send({ cmd: 'do_recovery_password' }, body),
       );
       return user;
     } catch (error) {
@@ -59,7 +59,7 @@ export class AuthController {
   async doChangePassword(@Body() body: ChangePasswordDto) {
     try {
       const user = await firstValueFrom(
-        this.authClient.send({ cmd: 'do_change_password' }, body),
+        this.client.send({ cmd: 'do_change_password' }, body),
       );
       return user;
     } catch (error) {
