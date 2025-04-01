@@ -24,8 +24,8 @@ import { UpdatePlanDto } from './dto/update-plan.dto';
 @Controller('plans')
 export class PlansController {
   constructor(
-    @Inject(envs.plan_service_service)
-    private readonly plansClient: ClientProxy,
+    @Inject(envs.nats_service_name)
+    private readonly client: ClientProxy,
   ) {}
 
   @Post('/')
@@ -34,7 +34,7 @@ export class PlansController {
   async create(@Payload() createPlanDto: CreatePlanDto) {
     try {
       const plan = await firstValueFrom(
-        this.plansClient.send({ cmd: 'createPlan' }, createPlanDto),
+        this.client.send({ cmd: 'createPlan' }, createPlanDto),
       );
       return plan;
     } catch (error) {
@@ -46,7 +46,7 @@ export class PlansController {
   async findAll(@Query() paginationDto: PaginationDto) {
     try {
       const plan = await firstValueFrom(
-        this.plansClient.send({ cmd: 'findAllPlans' }, paginationDto),
+        this.client.send({ cmd: 'findAllPlans' }, paginationDto),
       );
       return plan;
     } catch (error) {
@@ -60,7 +60,7 @@ export class PlansController {
   async deleteOne(@Param() planIdDto: PlanIdDto) {
     try {
       const plan = await firstValueFrom(
-        this.plansClient.send({ cmd: 'deletePlan' }, planIdDto.id),
+        this.client.send({ cmd: 'deletePlan' }, planIdDto.id),
       );
       return plan;
     } catch (error) {
@@ -75,7 +75,7 @@ export class PlansController {
     try {
       updatePlanDto.id = planIdDto.id;
       const plan = await firstValueFrom(
-        this.plansClient.send({ cmd: 'updatePlan' }, updatePlanDto),
+        this.client.send({ cmd: 'updatePlan' }, updatePlanDto),
       );
       return plan;
     } catch (error) {

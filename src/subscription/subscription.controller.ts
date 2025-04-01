@@ -7,15 +7,15 @@ import { Controller, Post, Body, Inject } from '@nestjs/common';
 @Controller('subscription')
 export class SubscriptionController {
   constructor(
-    @Inject(envs.plan_service_service)
-    private readonly plansClient: ClientProxy,
+    @Inject(envs.nats_service_name)
+    private readonly client: ClientProxy,
   ) {}
 
   @Post()
   async create(@Body() createSubscriptionDto: CreateSubscriptionDto) {
     try {
       const subscription = await firstValueFrom(
-        this.plansClient.send({ cmd: 'createSubscription' }, createSubscriptionDto),
+        this.client.send({ cmd: 'createSubscription' }, createSubscriptionDto),
       );
       return subscription;
     } catch (error) {
@@ -27,7 +27,7 @@ export class SubscriptionController {
   async validatePayment(@Body() paymentBody: any) {
     try {
       const subscription = await firstValueFrom(
-        this.plansClient.send({ cmd: 'validatePayment' }, paymentBody),
+        this.client.send({ cmd: 'validatePayment' }, paymentBody),
       );
       return subscription;
     } catch (error) {
