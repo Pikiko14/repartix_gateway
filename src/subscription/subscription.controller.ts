@@ -3,7 +3,7 @@ import { envs } from 'src/configuration';
 import { AuthGuard } from 'src/commons/guards/auth.guard';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { Controller, Post, Body, Inject, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Inject, UseGuards, Req } from '@nestjs/common';
 
 @Controller('subscription')
 export class SubscriptionController {
@@ -26,9 +26,14 @@ export class SubscriptionController {
   }
 
   @Post('payment-webhook')
-  async validatePayment(@Body() paymentBody: any) {
+  async validatePayment(@Req() req: any, @Body() paymentBody: any) {
     try {
-      this.client.emit('validatePayment', paymentBody);
+      const { query } = req;
+
+      if (query['data.id'] && query.type === 'payment') {
+        const id = query['data.id'];
+        this.client.emit('validatePayment', id);
+      }
       return paymentBody;
     } catch (error) {
       throw new RpcException(error);
