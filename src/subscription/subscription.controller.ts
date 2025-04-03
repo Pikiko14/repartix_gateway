@@ -28,6 +28,7 @@ export class SubscriptionController {
   @Post('payment-webhook')
   async validatePayment(@Body() paymentBody: any) {
     try {
+      console.log(paymentBody);
       const subscription = await firstValueFrom(
         this.client.send({ cmd: 'validatePayment' }, paymentBody),
       );
