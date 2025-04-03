@@ -28,11 +28,8 @@ export class SubscriptionController {
   @Post('payment-webhook')
   async validatePayment(@Body() paymentBody: any) {
     try {
-      console.log(paymentBody);
-      const subscription = await firstValueFrom(
-        this.client.send({ cmd: 'validatePayment' }, paymentBody),
-      );
-      return subscription;
+      this.client.emit('validatePayment', paymentBody);
+      return paymentBody;
     } catch (error) {
       throw new RpcException(error);
     }
