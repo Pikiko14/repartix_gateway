@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Inject,
+  Req,
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
@@ -27,7 +28,10 @@ export class UsersController {
   @Post()
   @Scopes('create-user')
   @UseGuards(AuthGuard, ScopesGuard)
-  async create(@Body() createUserDto: CreateUserDto) {
+  async create(@Req() req, @Body() createUserDto: CreateUserDto) {
+    createUserDto.parent_id = req.user.id;
+
+    // create user
     try {
       const user = await firstValueFrom(
         this.client.send('createUser', createUserDto),
