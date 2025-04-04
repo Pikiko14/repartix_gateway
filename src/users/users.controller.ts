@@ -29,8 +29,8 @@ export class UsersController {
   @Scopes('create-user')
   @UseGuards(AuthGuard, ScopesGuard)
   async create(@Req() req, @Body() createUserDto: CreateUserDto) {
-    createUserDto.parent_id = req.user.id;
-
+    createUserDto.parent_id = req.user.parent || req.user.id;
+    console.log(req.user);
     // create user
     try {
       const user = await firstValueFrom(
