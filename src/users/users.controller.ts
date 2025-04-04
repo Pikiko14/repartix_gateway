@@ -1,0 +1,60 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Inject,
+} from '@nestjs/common';
+import { firstValueFrom } from 'rxjs';
+import { envs } from 'src/configuration';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthGuard } from 'src/commons/guards/auth.guard';
+import { ScopesGuard } from 'src/commons/guards/scopes.guard';
+import { Scopes } from 'src/commons/decorators/scope.decorator';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
+
+@Controller('users')
+export class UsersController {
+  constructor(
+    @Inject(envs.nats_service_name) private readonly client: ClientProxy,
+  ) {}
+
+  @Post()
+  @Scopes('create-user')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async create(@Body() createUserDto: CreateUserDto) {
+    try {
+      const user = await firstValueFrom(
+        this.client.send('createUser', createUserDto),
+      );
+      return user;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Get()
+  findAll() {
+    return 2;
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return 3;
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return 4;
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return 5;
+  }
+}

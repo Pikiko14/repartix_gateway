@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { PlansModule } from './plans/plans.module';
 import { NatsModule } from './transports/nats.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
     }),
     SubscriptionModule,
     NatsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
