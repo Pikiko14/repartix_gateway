@@ -57,7 +57,13 @@ export class SubscriptionController {
       const subscription = await firstValueFrom(
         this.client.send('get_user_subscription', modelId),
       );
-      return subscription;
+      return {
+        success: true,
+        data: {
+          subscription
+        },
+        message: 'Subscription data',
+      };
     } catch (error) {
       throw new RpcException(error);
     }
