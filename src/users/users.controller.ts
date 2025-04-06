@@ -28,7 +28,7 @@ export class UsersController {
 
   @Post()
   @Scopes('create-user')
-  @UseGuards(AuthGuard, SubscriptionGuard ,ScopesGuard)
+  @UseGuards(AuthGuard, SubscriptionGuard, ScopesGuard)
   async create(@Req() req, @Body() createUserDto: CreateUserDto) {
     createUserDto.parent_id = req.user.parent || req.user.id;
     // create user
