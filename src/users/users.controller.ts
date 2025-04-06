@@ -10,7 +10,7 @@ import {
   Inject,
   Req,
 } from '@nestjs/common';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 import { envs } from 'src/configuration';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -18,6 +18,7 @@ import { AuthGuard } from 'src/commons/guards/auth.guard';
 import { ScopesGuard } from 'src/commons/guards/scopes.guard';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
 
 @Controller('users')
 export class UsersController {
@@ -27,10 +28,9 @@ export class UsersController {
 
   @Post()
   @Scopes('create-user')
-  @UseGuards(AuthGuard, ScopesGuard)
+  @UseGuards(AuthGuard, SubscriptionGuard ,ScopesGuard)
   async create(@Req() req, @Body() createUserDto: CreateUserDto) {
     createUserDto.parent_id = req.user.parent || req.user.id;
-    console.log(req.user);
     // create user
     try {
       const user = await firstValueFrom(
