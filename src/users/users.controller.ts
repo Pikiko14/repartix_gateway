@@ -9,6 +9,7 @@ import {
   UseGuards,
   Inject,
   Req,
+  Put,
 } from '@nestjs/common';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { envs } from 'src/configuration';
@@ -19,6 +20,7 @@ import { ScopesGuard } from 'src/commons/guards/scopes.guard';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
+import { UpdateUserCredentialDto } from './dto/update-user-credential.dto';
 
 @Controller('users')
 export class UsersController {
@@ -35,6 +37,24 @@ export class UsersController {
     try {
       const user = await firstValueFrom(
         this.client.send('createUser', createUserDto),
+      );
+      return user;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Put('update-credentials')
+  @Scopes('update-user')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async updateCredentials(
+    @Req() req,
+    @Body() updateDredentialsDto: UpdateUserCredentialDto,
+  ) {
+    try {
+      updateDredentialsDto.user_id = req.user.id;
+      const user = await firstValueFrom(
+        this.client.send('updateUserCredential', updateDredentialsDto),
       );
       return user;
     } catch (error) {
