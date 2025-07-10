@@ -63,7 +63,7 @@ export class UsersController {
     }
   }
 
-  @Put('update-credentials')
+  @Put('update-profile')
   @Scopes('update-user')
   @UseGuards(AuthGuard, ScopesGuard)
   async updateProfile(
