@@ -19,6 +19,7 @@ import { AuthGuard } from 'src/commons/guards/auth.guard';
 import { ScopesGuard } from 'src/commons/guards/scopes.guard';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
 import { UpdateUserCredentialDto } from './dto/update-user-credential.dto';
 
@@ -62,23 +63,21 @@ export class UsersController {
     }
   }
 
-  @Get()
-  findAll() {
-    return 2;
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return 3;
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return 4;
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return 5;
+  @Put('update-credentials')
+  @Scopes('update-user')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async updateProfile(
+    @Req() req,
+    @Body() updateUserProfileDto: UpdateUserProfileDto,
+  ) {
+    try {
+      updateUserProfileDto.user_id = req.user.id;
+      const user = await firstValueFrom(
+        this.client.send('updateUserProfile', updateUserProfileDto),
+      );
+      return user;
+    } catch (error) {
+      throw new RpcException(error);
+    }
   }
 }
