@@ -1,0 +1,36 @@
+# Stage 1 deps
+FROM node:23-alpine as deps
+
+WORKDIR /usr/src/app
+
+COPY package.json ./
+COPY package-lock.json ./
+
+RUN npm install --legacy-peer-deps
+
+
+# Stage 2 builder
+FROM node:23-alpine as build
+
+WORKDIR /usr/src/app
+
+COPY --from=deps /usr/src/app/node_modules ./node_modules
+
+COPY . .
+
+RUN npm run build
+
+RUN npm ci -f --only=production --legacy-peer-deps && npm cache clean --force
+
+# stage 3 runner
+FROM node:23-alpine as runner_prod
+
+WORKDIR /usr/src/app
+
+COPY --from=build /usr/src/app/node_modules ./node_modules
+
+COPY --from=build /usr/src/app/dist ./dist
+
+EXPOSE 3000
+
+CMD ["node", "dist/main.js"]
