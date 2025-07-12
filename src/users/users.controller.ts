@@ -23,6 +23,7 @@ import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
 import { UpdateUserCredentialDto } from './dto/update-user-credential.dto';
 import { UpdateUserBrandDto } from './dto/update-user-brand.dto';
+import { UserBrandConfigurationDto } from './dto/update-user-brand-configuration.dto';
 
 @Controller('users')
 export class UsersController {
@@ -93,6 +94,24 @@ export class UsersController {
       updateUserBrand.user_id = req.user.parent || req.user.id;
       const user = await firstValueFrom(
         this.client.send('updateUserBrand', updateUserBrand),
+      );
+      return user;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Put('update-brand-configuration')
+  @Scopes('update-brand')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async updateBrandConfiguration(
+    @Req() req,
+    @Body() userBrandConfiguration: UserBrandConfigurationDto,
+  ) {
+    try {
+      userBrandConfiguration.user_id = req.user.parent || req.user.id;
+      const user = await firstValueFrom(
+        this.client.send('updateUserBrandConfiguration', userBrandConfiguration),
       );
       return user;
     } catch (error) {
