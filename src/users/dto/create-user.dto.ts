@@ -5,4 +5,7 @@ export class CreateUserDto extends SignUpDto {
   @IsOptional()
   @IsMongoId()
   parent_id?: string;
+
+  @IsOptional()
+  type_user: string;
 }
