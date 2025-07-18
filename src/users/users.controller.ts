@@ -3,26 +3,24 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
   UseGuards,
   Inject,
   Req,
   Put,
+  Query,
 } from '@nestjs/common';
-import { firstValueFrom, Subscription } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from 'src/commons/guards/auth.guard';
 import { ScopesGuard } from 'src/commons/guards/scopes.guard';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
+import { UpdateUserBrandDto } from './dto/update-user-brand.dto';
+import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
 import { UpdateUserCredentialDto } from './dto/update-user-credential.dto';
-import { UpdateUserBrandDto } from './dto/update-user-brand.dto';
 import { UserBrandConfigurationDto } from './dto/update-user-brand-configuration.dto';
 
 @Controller('users')
@@ -42,6 +40,22 @@ export class UsersController {
         this.client.send('createUser', createUserDto),
       );
       return user;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Get()
+  @Scopes('list-user')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async get(@Req() req, @Query() queryParams: QueryParamDto) {
+    queryParams.parent_id = req.user.parent || req.user.id;
+    // list user
+    try {
+      const users = await firstValueFrom(
+        this.client.send('list-users', queryParams),
+      );
+      return users;
     } catch (error) {
       throw new RpcException(error);
     }
