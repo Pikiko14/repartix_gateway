@@ -63,7 +63,7 @@ export class UsersController {
     }
   }
 
-  @Put('update/:id')
+  @Put(':id')
   @Scopes('update-user')
   @UseGuards(AuthGuard, ScopesGuard)
   async update(
@@ -85,7 +85,7 @@ export class UsersController {
     }
   }
 
-  @Put('update-credentials')
+  @Put('update/credentials')
   @Scopes('update-user')
   @UseGuards(AuthGuard, ScopesGuard)
   async updateCredentials(
@@ -103,7 +103,7 @@ export class UsersController {
     }
   }
 
-  @Put('update-profile')
+  @Put('update/profile')
   @Scopes('update-user')
   @UseGuards(AuthGuard, ScopesGuard)
   async updateProfile(
@@ -121,7 +121,7 @@ export class UsersController {
     }
   }
 
-  @Put('update-brand')
+  @Put('update/brand')
   @Scopes('update-brand')
   @UseGuards(AuthGuard, ScopesGuard)
   async updateBrand(
@@ -139,7 +139,7 @@ export class UsersController {
     }
   }
 
-  @Put('update-brand-configuration')
+  @Put('update/brand-configuration')
   @Scopes('update-brand')
   @UseGuards(AuthGuard, ScopesGuard)
   async updateBrandConfiguration(
