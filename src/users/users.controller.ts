@@ -8,10 +8,12 @@ import {
   Req,
   Put,
   Query,
+  Param,
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from 'src/commons/guards/auth.guard';
 import { ScopesGuard } from 'src/commons/guards/scopes.guard';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
@@ -56,6 +58,28 @@ export class UsersController {
         this.client.send('list-users', queryParams),
       );
       return users;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Put(':id')
+  @Scopes('update-user')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async update(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    updateUserDto.parent_id = req.user.parent || req.user.id;
+    updateUserDto.id = id;
+
+    // list user
+    try {
+      const user = await firstValueFrom(
+        this.client.send('update-users', updateUserDto),
+      );
+      return user;
     } catch (error) {
       throw new RpcException(error);
     }
