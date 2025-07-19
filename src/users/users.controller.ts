@@ -9,6 +9,7 @@ import {
   Put,
   Query,
   Param,
+  Delete,
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
@@ -74,10 +75,28 @@ export class UsersController {
     updateUserDto.parent_id = req.user.parent || req.user.id;
     updateUserDto.id = id;
 
-    // list user
+    // update user
     try {
       const user = await firstValueFrom(
         this.client.send('update-users', updateUserDto),
+      );
+      return user;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Delete(':id')
+  @Scopes('delete-user')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async delete(
+    @Req() req,
+    @Param('id') id: string,
+  ) {
+    // delete user
+    try {
+      const user = await firstValueFrom(
+        this.client.send('delete-users', { id, parent_id: req.user.parent || req.user.id }),
       );
       return user;
     } catch (error) {
