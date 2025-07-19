@@ -63,7 +63,7 @@ export class UsersController {
     }
   }
 
-  @Put(':id')
+  @Put('update/:id')
   @Scopes('update-user')
   @UseGuards(AuthGuard, ScopesGuard)
   async update(
