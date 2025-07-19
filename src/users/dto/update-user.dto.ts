@@ -7,6 +7,10 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsOptional()
     id: string;
 
+    @IsString()
+    @IsOptional()
+    _id: string;
+
     @IsOptional()
     @IsString()
     parent_id: string;
