@@ -6,6 +6,7 @@ import { PlansModule } from './plans/plans.module';
 import { NatsModule } from './transports/nats.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { UsersModule } from './users/users.module';
+import { CouriersModule } from './couriers/couriers.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UsersModule } from './users/users.module';
     SubscriptionModule,
     NatsModule,
     UsersModule,
+    CouriersModule,
   ],
   controllers: [],
   providers: [],
