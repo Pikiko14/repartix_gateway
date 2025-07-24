@@ -10,10 +10,13 @@ export class ProfileDto {
   address?: string;
 
   @IsOptional()
-  @IsNumber()
-  phone?: number;
+  @IsString()
+  phone?: string;
 
   @IsOptional()
   @IsNumber()
   age?: number;
+
+  @IsOptional()
+  dni?: string;
 }
