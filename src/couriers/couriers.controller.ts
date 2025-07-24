@@ -4,9 +4,10 @@ import { AuthGuard } from 'src/commons/guards/auth.guard';
 import { CreateCourierDto } from './dto/create-courier.dto';
 import { ScopesGuard } from 'src/commons/guards/scopes.guard';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
+import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
-import { Body, Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query, Req, UseGuards } from '@nestjs/common';
 
 @Controller('couriers')
 export class CouriersController {
@@ -23,6 +24,22 @@ export class CouriersController {
     try {
       const courier = await firstValueFrom(
         this.client.send('create-couriers', createCourierDto),
+      );
+      return courier;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Get()
+  @Scopes('list-couriers')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async findAll(@Req() req, @Query() queryParams: QueryParamDto) {
+    queryParams.parent_id = req.user.parent || req.user.id;
+    // create courier
+    try {
+      const courier = await firstValueFrom(
+        this.client.send('list-couriers', queryParams),
       );
       return courier;
     } catch (error) {
