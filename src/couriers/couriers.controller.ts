@@ -1,3 +1,15 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
 import { AuthGuard } from 'src/commons/guards/auth.guard';
@@ -7,7 +19,6 @@ import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
-import { Body, Controller, Get, Inject, Post, Query, Req, UseGuards } from '@nestjs/common';
 
 @Controller('couriers')
 export class CouriersController {
@@ -40,6 +51,20 @@ export class CouriersController {
     try {
       const courier = await firstValueFrom(
         this.client.send('list-couriers', queryParams),
+      );
+      return courier;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Delete(':id')
+  @Scopes('delete-couriers')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async remove(@Req() req, @Param('id') id: string) {
+    try {
+      const courier = await firstValueFrom(
+        this.client.send('delete-couriers', { id, parent_id: req.user.parent || req.user.id }),
       );
       return courier;
     } catch (error) {
