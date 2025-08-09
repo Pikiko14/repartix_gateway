@@ -88,6 +88,7 @@ export class CouriersController {
     try {
       updateCourierDto.parent_id = req.user.parent || req.user.id;
       updateCourierDto.id = id;
+      delete updateCourierDto._id;
       
       const courier = await firstValueFrom(
         this.client.send('update-couriers', updateCourierDto),
