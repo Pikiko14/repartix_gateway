@@ -7,6 +7,7 @@ import { NatsModule } from './transports/nats.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { UsersModule } from './users/users.module';
 import { CouriersModule } from './couriers/couriers.module';
+import { CitiesModule } from './cities/cities.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CouriersModule } from './couriers/couriers.module';
     NatsModule,
     UsersModule,
     CouriersModule,
+    CitiesModule,
   ],
   controllers: [],
   providers: [],
