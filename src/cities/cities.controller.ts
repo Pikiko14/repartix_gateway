@@ -9,9 +9,11 @@ import {
   UseGuards,
   Delete,
   Param,
+  Put,
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
+import { UpdateCityDto } from './dto/update-city.dto';
 import { CreateCityDto } from './dto/create-city.dto';
 import { AuthGuard } from 'src/commons/guards/auth.guard';
 import { ScopesGuard } from 'src/commons/guards/scopes.guard';
@@ -75,4 +77,26 @@ export class CitiesController {
       throw new RpcException(error);
     }
   }
+
+  @Put(':id')
+    @Scopes('update-couriers')
+    @UseGuards(AuthGuard, ScopesGuard)
+    async update(
+      @Req() req,
+      @Param('id') id: string,
+      @Body() updateCity: UpdateCityDto,
+    ) {
+      try {
+        updateCity.parent_id = req.user.parent || req.user.id;
+        updateCity.id = id;
+        delete updateCity._id;
+        
+        const courier = await firstValueFrom(
+          this.client.send('update-city', updateCity),
+        );
+        return courier;
+      } catch (error) {
+        throw new RpcException(error);
+      }
+    }
 }
