@@ -1,12 +1,3 @@
-import { firstValueFrom } from 'rxjs';
-import { envs } from 'src/configuration';
-import { CreateCityDto } from './dto/create-city.dto';
-import { AuthGuard } from 'src/commons/guards/auth.guard';
-import { ScopesGuard } from 'src/commons/guards/scopes.guard';
-import { Scopes } from 'src/commons/decorators/scope.decorator';
-import { QueryParamDto } from 'src/commons/dto/query-params.dto';
-import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
 import {
   Body,
   Controller,
@@ -16,7 +7,18 @@ import {
   Query,
   Req,
   UseGuards,
+  Delete,
+  Param,
 } from '@nestjs/common';
+import { firstValueFrom } from 'rxjs';
+import { envs } from 'src/configuration';
+import { CreateCityDto } from './dto/create-city.dto';
+import { AuthGuard } from 'src/commons/guards/auth.guard';
+import { ScopesGuard } from 'src/commons/guards/scopes.guard';
+import { Scopes } from 'src/commons/decorators/scope.decorator';
+import { QueryParamDto } from 'src/commons/dto/query-params.dto';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
 
 @Controller('cities')
 export class CitiesController {
@@ -51,6 +53,24 @@ export class CitiesController {
         this.client.send('find-all-cities', queryParams),
       );
       return courier;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Delete(':id')
+  @Scopes('delete-city')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async delete(@Req() req, @Param('id') id: string) {
+    // delete user
+    try {
+      const user = await firstValueFrom(
+        this.client.send('remove-city', {
+          id,
+          parent_id: req.user.parent || req.user.id,
+        }),
+      );
+      return user;
     } catch (error) {
       throw new RpcException(error);
     }
