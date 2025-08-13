@@ -31,6 +31,9 @@ class CreateZoneDto {
   @Min(-180)
   @Max(180)
   lon: number;
+
+  @IsOptional()
+  price: number;
 }
 
 export class CreateCityDto {
