@@ -49,7 +49,6 @@ export class CouriersController {
   @UseGuards(AuthGuard, ScopesGuard)
   async findAll(@Req() req, @Query() queryParams: QueryParamDto) {
     queryParams.parent_id = req.user.parent || req.user.id;
-    // create courier
     try {
       const courier = await firstValueFrom(
         this.client.send('list-couriers', queryParams),
