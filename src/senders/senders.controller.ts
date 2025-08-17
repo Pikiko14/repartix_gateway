@@ -20,6 +20,7 @@ import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
+import { UpdateSenderDto } from './dto/update-sender.dto';
 
 @Controller('senders')
 export class SendersColtroller {
@@ -30,12 +31,12 @@ export class SendersColtroller {
   @Post()
   @Scopes('create-sender')
   @UseGuards(AuthGuard, SubscriptionGuard, ScopesGuard)
-  async create(@Req() req, @Body() createCourierDto: CreateSenderDto) {
-    createCourierDto.parent_id = req.user.parent || req.user.id;
+  async create(@Req() req, @Body() createSenderDto: CreateSenderDto) {
+    createSenderDto.parent_id = req.user.parent || req.user.id;
     // create sender
     try {
       const sender = await firstValueFrom(
-        this.client.send('create-sender', createCourierDto),
+        this.client.send('create-sender', createSenderDto),
       );
       return sender;
     } catch (error) {
@@ -49,10 +50,49 @@ export class SendersColtroller {
   async findAll(@Req() req, @Query() queryParams: QueryParamDto) {
     queryParams.parent_id = req.user.parent || req.user.id;
     try {
-      const courier = await firstValueFrom(
+      const senders = await firstValueFrom(
         this.client.send('find-all-sender', queryParams),
       );
-      return courier;
+      return senders;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Delete(':id')
+  @Scopes('delete-sender')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async remove(@Req() req, @Param('id') id: string) {
+    try {
+      const sender = await firstValueFrom(
+        this.client.send('remove-sender', {
+          id,
+          parent_id: req.user.parent || req.user.id,
+        }),
+      );
+      return sender;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Put(':id')
+  @Scopes('update-sender')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async update(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() updateSenderDto: UpdateSenderDto,
+  ) {
+    try {
+      updateSenderDto.parent_id = req.user.parent || req.user.id;
+      updateSenderDto.id = id;
+      delete updateSenderDto._id;
+
+      const sender = await firstValueFrom(
+        this.client.send('update-sender', updateSenderDto),
+      );
+      return sender;
     } catch (error) {
       throw new RpcException(error);
     }
