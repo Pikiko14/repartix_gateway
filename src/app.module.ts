@@ -6,6 +6,7 @@ import { PlansModule } from './plans/plans.module';
 import { UsersModule } from './users/users.module';
 import { CitiesModule } from './cities/cities.module';
 import { NatsModule } from './transports/nats.module';
+import { OrdersModule } from './orders/orders.module';
 import { SenderModule } from './senders/sender.module';
 import { ClientsModule } from './clients/clients.module';
 import { CouriersModule } from './couriers/couriers.module';
@@ -22,6 +23,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
     }),
     NatsModule,
     UsersModule,
+    OrdersModule,
     SenderModule,
     CitiesModule,
     ClientsModule,
