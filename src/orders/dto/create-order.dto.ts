@@ -214,6 +214,6 @@ export class CreateOrderDto {
   parent_id?: string;
 
   @IsOptional()
-  @IsString()
+  @IsNumber()
   order_price?: number;
 }

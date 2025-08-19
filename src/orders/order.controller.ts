@@ -9,6 +9,7 @@ import {
   Query,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
@@ -85,6 +86,23 @@ export class OrdersController {
           id,
           parent_id: req.user.parent || req.user.id,
         }),
+      );
+      return order;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Put(':id')
+  @Scopes('update-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async update(@Req() req, @Param('id') id: string, @Body() updateOrderDto) {
+    updateOrderDto.id = id;
+    updateOrderDto.parent_id = req.user.parent || req.user.id;
+
+    try {
+      const order = await firstValueFrom(
+        this.client.send('update-order', updateOrderDto),
       );
       return order;
     } catch (error) {
