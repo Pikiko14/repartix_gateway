@@ -1,3 +1,15 @@
+import {
+  Post,
+  UseGuards,
+  Req,
+  Body,
+  Inject,
+  Controller,
+  Get,
+  Query,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -6,7 +18,7 @@ import { ScopesGuard } from 'src/commons/guards/scopes.guard';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
-import { Post, UseGuards, Req, Body, Inject, Controller } from '@nestjs/common';
+import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -21,10 +33,60 @@ export class OrdersController {
     createOrderDto.parent_id = req.user.parent || req.user.id;
 
     try {
-      const city = await firstValueFrom(
+      const order = await firstValueFrom(
         this.client.send('create-order', createOrderDto),
       );
-      return city;
+      return order;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Get()
+  @Scopes('list-order')
+  @UseGuards(AuthGuard, SubscriptionGuard, ScopesGuard)
+  async findAll(@Req() req, @Query() queryParams: QueryParamDto) {
+    queryParams.parent_id = req.user.parent || req.user.id;
+
+    try {
+      const orders = await firstValueFrom(
+        this.client.send('list-order', queryParams),
+      );
+      return orders;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Get(':id')
+  @Scopes('list-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async findOne(@Req() req, @Param('id') id: string) {
+    try {
+      const order = await firstValueFrom(
+        this.client.send('find-order', {
+          id,
+          parent_id: req.user.parent || req.user.id,
+        }),
+      );
+      return order;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Delete(':id')
+  @Scopes('delete-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async delete(@Req() req, @Param('id') id: string) {
+    try {
+      const order = await firstValueFrom(
+        this.client.send('remove-order', {
+          id,
+          parent_id: req.user.parent || req.user.id,
+        }),
+      );
+      return order;
     } catch (error) {
       throw new RpcException(error);
     }

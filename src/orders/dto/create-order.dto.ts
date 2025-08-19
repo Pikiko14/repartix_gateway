@@ -212,4 +212,8 @@ export class CreateOrderDto {
   @IsOptional()
   @IsString()
   parent_id?: string;
+
+  @IsOptional()
+  @IsString()
+  order_price?: number;
 }

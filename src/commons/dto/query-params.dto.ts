@@ -1,4 +1,5 @@
-import { IsString, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsString, IsOptional, IsDate } from 'class-validator';
 
 export class QueryParamDto {
   @IsOptional()
@@ -15,4 +16,17 @@ export class QueryParamDto {
   @IsString()
   @IsOptional()
   search?: string;
+
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  from?: Date;
+
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  to?: Date;
+
+  @IsOptional()
+  filter?: string;
 }
