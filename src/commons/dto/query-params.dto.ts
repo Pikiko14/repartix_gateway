@@ -28,5 +28,5 @@ export class QueryParamDto {
   to?: Date;
 
   @IsOptional()
-  filter?: string;
+  filters?: string;
 }
