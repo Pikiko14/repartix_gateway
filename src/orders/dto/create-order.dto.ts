@@ -223,6 +223,7 @@ export class CreateOrderDto {
   reference?: string;
 
   @IsString()
+  @IsOptional()
   city?: string;
 
   @IsOptional()
