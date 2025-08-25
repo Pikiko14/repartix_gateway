@@ -94,12 +94,12 @@ export class ProductDto {
   @IsNumber()
   quantity: number;
 
-  @IsNumber()
-  unit_price: number;
+  @IsString()
+  unit_price: string;
 
   @IsOptional()
-  @IsNumber()
-  total_price?: number;
+  @IsString()
+  total_price?: string;
 
   @IsOptional()
   @IsNumber()
@@ -148,6 +148,7 @@ export class ZoneDto {
   @IsNotEmpty()
   cod_zone: string;
 }
+
 export class CreateOrderDto {
   @IsOptional()
   @IsDate()
@@ -235,7 +236,6 @@ export class CreateOrderDto {
   reference?: string;
 
   @IsString()
-  @IsOptional()
   city?: string;
 
   @IsOptional()
