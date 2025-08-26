@@ -10,6 +10,7 @@ import { OrdersModule } from './orders/orders.module';
 import { SenderModule } from './senders/sender.module';
 import { ClientsModule } from './clients/clients.module';
 import { CouriersModule } from './couriers/couriers.module';
+import { ShippingModule } from './shipping/shipping.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 
 @Module({
@@ -27,6 +28,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
     SenderModule,
     CitiesModule,
     ClientsModule,
+    ShippingModule,
     CouriersModule,
     SubscriptionModule,
   ],
