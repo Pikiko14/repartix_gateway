@@ -58,12 +58,12 @@ export class CityDto {
 export class CreateShippingDto {
   @ValidateNested()
   @Type(() => ClientDto)
-  @IsNotEmpty()
+  @IsOptional()
   client: ClientDto;
 
   @ValidateNested()
   @Type(() => SenderDto)
-  @IsNotEmpty()
+  @IsOptional()
   sender: SenderDto;
 
   @ValidateNested()
