@@ -1,11 +1,17 @@
 import { Type } from 'class-transformer';
 import {
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
+
+enum ShippingMethod {
+  byKm = 'by-km',
+  citiesAndZones = 'cities-and-zones',
+}
 
 export class CoordsDto {
   @IsNumber()
@@ -60,8 +66,11 @@ export class CreateShippingDto {
   @IsNotEmpty()
   sender: SenderDto;
 
-  @IsOptional()
   @ValidateNested()
   @Type(() => CityDto)
+  @IsOptional()
   city: CityDto;
+
+  @IsEnum(ShippingMethod)
+  shippingMethod: string;
 }
