@@ -1,4 +1,4 @@
-import { Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
 import { AuthGuard } from 'src/commons/guards/auth.guard';
@@ -16,8 +16,22 @@ export class ShippingController {
 
   @Post('/quote')
   @UseGuards(AuthGuard)
-  async quoteShipping(@Payload() createShippingDto: CreateShippingDto) {
+  async quoteShipping(
+    @Req() req,
+    @Payload() createShippingDto: CreateShippingDto
+  ) {
     try {
+      const parent = req.user.parent || req.user.id;
+      
+      const { configuration } = await firstValueFrom(
+        this.client.send('find-configuration', parent),
+      );
+
+      if (configuration) {
+        createShippingDto.price_by_km = configuration?.price_by_km || 0;
+        createShippingDto.shippingMethod = configuration?.route_price_by_km ? 'by-km' : 'cities-and-zones';
+      }
+
       const quoteShipping = await firstValueFrom(
         this.client.send('quote-shipping', createShippingDto),
       );

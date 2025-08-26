@@ -73,4 +73,8 @@ export class CreateShippingDto {
 
   @IsEnum(ShippingMethod)
   shippingMethod: string;
+
+  @IsOptional()
+  @IsNumber()
+  price_by_km?: number;
 }
