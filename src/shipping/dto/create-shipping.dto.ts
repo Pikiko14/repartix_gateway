@@ -71,6 +71,7 @@ export class CreateShippingDto {
   @IsOptional()
   city: CityDto;
 
+  @IsOptional()
   @IsEnum(ShippingMethod)
   shippingMethod: string;
 
