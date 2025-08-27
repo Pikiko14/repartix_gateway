@@ -240,7 +240,7 @@ export class CreateOrderDto {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => CourierDto)
+  @Type(() => ZoneDto)
   zone?: ZoneDto;
 
   @IsOptional()
