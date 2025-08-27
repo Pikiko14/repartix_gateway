@@ -228,10 +228,11 @@ export class CreateOrderDto {
 
   @IsOptional()
   @IsNumber()
-  order_price?: number;
+  @Type(() => Number)
+  order_price?: Number;
 
   @IsOptional()
-  @IsNumber()
+  @IsString()
   reference?: string;
 
   @IsString()
