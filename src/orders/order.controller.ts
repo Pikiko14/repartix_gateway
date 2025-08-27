@@ -97,7 +97,6 @@ export class OrdersController {
   @Scopes('update-order')
   @UseGuards(AuthGuard, ScopesGuard)
   async update(@Req() req, @Param('id') id: string, @Body() updateOrderDto) {
-    console.log(updateOrderDto);
     updateOrderDto.id = id;
     updateOrderDto.parent_id = req.user.parent || req.user.id;
 
