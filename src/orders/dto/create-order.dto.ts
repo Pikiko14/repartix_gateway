@@ -195,7 +195,6 @@ export class CreateOrderDto {
   @Type(() => ProductDto)
   products: ProductDto[];
 
-  
   @IsOptional()
   @ValidateNested()
   @Type(() => CourierDto)
@@ -243,4 +242,8 @@ export class CreateOrderDto {
   @ValidateNested()
   @Type(() => CourierDto)
   zone?: ZoneDto;
+
+  @IsOptional()
+  @IsBoolean()
+  print_guide?: boolean;
 }
