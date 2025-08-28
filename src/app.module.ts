@@ -12,6 +12,7 @@ import { ClientsModule } from './clients/clients.module';
 import { CouriersModule } from './couriers/couriers.module';
 import { ShippingModule } from './shipping/shipping.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { GuidesModule } from './guides/guides.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
     }),
     NatsModule,
     UsersModule,
+    GuidesModule,
     OrdersModule,
     SenderModule,
     CitiesModule,
