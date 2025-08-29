@@ -10,11 +10,15 @@ import {
   Param,
   Delete,
   Put,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
+import { CreateNewsDto } from './dto/create-news.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { AuthGuard } from 'src/commons/guards/auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ScopesGuard } from 'src/commons/guards/scopes.guard';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { UpdateStatusDto } from './dto/update-order-status.dto';
@@ -114,15 +118,39 @@ export class OrdersController {
   @Put(':reference/status')
   @Scopes('update-order')
   @UseGuards(AuthGuard, ScopesGuard)
-  async updateStatys(
-    @Req() req,
-    @Body() updateOrderDto: UpdateStatusDto
-  ) {;
+  async updateStatus(@Req() req, @Body() updateOrderDto: UpdateStatusDto) {
     updateOrderDto.parent_id = req.user.parent || req.user.id;
 
     try {
       const order = await firstValueFrom(
         this.client.send('update-status-order', updateOrderDto),
+      );
+      return order;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Post('news')
+  @Scopes('create-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async createNews(
+    @Req() req,
+    @Body() createNewsDto: CreateNewsDto,
+    @UploadedFile() file: any,
+  ) {
+    createNewsDto.parent_id = req.user.parent || req.user.id;
+    if (file) {
+      createNewsDto.file = {
+        filename: file.originalname,
+        mimetype: file.mimetype,
+        buffer: file.buffer.toString('base64'),
+      };
+    }
+    try {
+      const order = await firstValueFrom(
+        this.client.send('create-order-news', createNewsDto),
       );
       return order;
     } catch (error) {
