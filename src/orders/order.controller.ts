@@ -17,9 +17,10 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { AuthGuard } from 'src/commons/guards/auth.guard';
 import { ScopesGuard } from 'src/commons/guards/scopes.guard';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
+import { UpdateStatusDto } from './dto/update-order-status.dto';
+import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
-import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -103,6 +104,25 @@ export class OrdersController {
     try {
       const order = await firstValueFrom(
         this.client.send('update-order', updateOrderDto),
+      );
+      return order;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Put(':reference/status')
+  @Scopes('update-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async updateStatys(
+    @Req() req,
+    @Body() updateOrderDto: UpdateStatusDto
+  ) {;
+    updateOrderDto.parent_id = req.user.parent || req.user.id;
+
+    try {
+      const order = await firstValueFrom(
+        this.client.send('update-status-order', updateOrderDto),
       );
       return order;
     } catch (error) {
