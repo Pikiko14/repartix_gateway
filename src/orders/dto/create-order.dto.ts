@@ -11,6 +11,16 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
+export enum StatusEnum {
+  pending = 'pending',
+  in_progress = 'in_progress',
+  delivered = 'delivered',
+  cancelled = 'cancelled',
+  returned = 'returned',
+  guide_printed = 'guide-printed',
+  guide_news = 'guide-news',
+}
+
 export class CoordsDto {
   @IsNumber()
   lat: number;
@@ -153,6 +163,28 @@ export class ZoneDto {
   cod_zone: string;
 }
 
+export class StatusesDto {
+  @IsNotEmpty()
+  @IsEnum(StatusEnum)
+  status:
+    | 'pending'
+    | 'in_progress'
+    | 'delivered'
+    | 'cancelled'
+    | 'returned'
+    | 'guide-printed'
+    | 'guide-news';
+
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  date?: Date;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+}
+
 export class CreateOrderDto {
   @IsOptional()
   @IsDate()
@@ -251,4 +283,10 @@ export class CreateOrderDto {
   @IsOptional()
   @IsBoolean()
   print_guide?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => StatusesDto)
+  statuses?: StatusesDto[];
 }
