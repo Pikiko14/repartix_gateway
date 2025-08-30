@@ -1,13 +1,13 @@
-import { IsNotEmpty, IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreatePaymentDto {
   @IsString()
   @IsNotEmpty()
   methods: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  amount: number;
+  amount: string;
 
   @IsOptional()
   file?: any;
@@ -18,5 +18,5 @@ export class CreatePaymentDto {
 
   @IsOptional()
   @IsString()
-  id?: string;
+  order_id?: string;
 }
