@@ -15,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
+import { Throttle } from '@nestjs/throttler';
 import { CreateNewsDto } from './dto/create-news.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { AuthGuard } from 'src/commons/guards/auth.guard';
@@ -51,6 +52,7 @@ export class OrdersController {
 
   @Get()
   @Scopes('list-order')
+  @Throttle({ default: { limit: Number(envs.limit), ttl: Number(envs.ttl) } })
   @UseGuards(AuthGuard, SubscriptionGuard, ScopesGuard)
   async findAll(@Req() req, @Query() queryParams: QueryParamDto) {
     queryParams.parent_id = req.user.parent || req.user.id;

@@ -7,6 +7,8 @@ interface EnvVars {
   JWT_SECRET: string;
   NATS_URL: string;
   NATH_SERVICE: string;
+  LIMIT: number;
+  TTL: number;
 }
 
 const envsSchema = joi.object({
@@ -15,6 +17,8 @@ const envsSchema = joi.object({
   JWT_SECRET: joi.string().required(),
   NATS_URL: joi.string().required(),
   NATH_SERVICE: joi.string().required(),
+  LIMIT: joi.number().required(),
+  TTL: joi.number().required(),
 })
 .unknown(true);
 
@@ -36,4 +40,6 @@ export const envs = {
   jwt_secret: envVars.JWT_SECRET,
   nats_server: envVars.NATS_URL,
   nats_service_name: envVars.NATH_SERVICE,
+  limit: envVars.LIMIT,
+  ttl: envVars.TTL,
 }

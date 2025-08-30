@@ -1,9 +1,12 @@
 import { envs } from './configuration';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { PlansModule } from './plans/plans.module';
 import { UsersModule } from './users/users.module';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { GuidesModule } from './guides/guides.module';
 import { CitiesModule } from './cities/cities.module';
 import { NatsModule } from './transports/nats.module';
 import { OrdersModule } from './orders/orders.module';
@@ -12,7 +15,7 @@ import { ClientsModule } from './clients/clients.module';
 import { CouriersModule } from './couriers/couriers.module';
 import { ShippingModule } from './shipping/shipping.module';
 import { SubscriptionModule } from './subscription/subscription.module';
-import { GuidesModule } from './guides/guides.module';
+import { CustomThrottlerGuard } from './commons/guards/custom-throttler.guard';
 
 @Module({
   imports: [
@@ -22,6 +25,15 @@ import { GuidesModule } from './guides/guides.module';
       global: true,
       secret: envs.jwt_secret,
       signOptions: { expiresIn: '1d' },
+    }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 600000,
+          limit: 1,
+          blockDuration: 60000,
+        },
+      ],
     }),
     NatsModule,
     UsersModule,
@@ -35,6 +47,11 @@ import { GuidesModule } from './guides/guides.module';
     SubscriptionModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: CustomThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
