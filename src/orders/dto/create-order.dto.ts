@@ -87,6 +87,10 @@ export class SenderDto {
   @ValidateNested()
   @Type(() => SenderAddressDto)
   address: SenderAddressDto;
+
+  @IsNotEmpty()
+  @IsString()
+  sender_id: string;
 }
 
 export class ProductDto {
@@ -194,23 +198,8 @@ export class CreateOrderDto {
   scheduled_date: Date;
 
   @IsOptional()
-  @IsEnum([
-    'pending',
-    'in_progress',
-    'delivered',
-    'cancelled',
-    'returned',
-    'guide-printed',
-    'guide-news',
-  ])
-  status:
-    | 'pending'
-    | 'in_progress'
-    | 'delivered'
-    | 'cancelled'
-    | 'returned'
-    | 'guide-printed'
-    | 'guide-news';
+  @IsString()
+  status: string;
 
   @IsNotEmpty()
   @ValidateNested()
@@ -292,5 +281,4 @@ export class CreateOrderDto {
   @ValidateNested({ each: true })
   @Type(() => CreateNewsDto)
   news?: CreateNewsDto[];
-
 }

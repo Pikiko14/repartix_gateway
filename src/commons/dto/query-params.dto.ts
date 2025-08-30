@@ -29,4 +29,10 @@ export class QueryParamDto {
 
   @IsOptional()
   filters?: string;
+
+  @IsOptional()
+  main_user_id?: string;
+
+  @IsOptional()
+  type_user?: string;
 }

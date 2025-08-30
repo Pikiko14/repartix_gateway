@@ -29,8 +29,8 @@ import { CustomThrottlerGuard } from './commons/guards/custom-throttler.guard';
     ThrottlerModule.forRoot({
       throttlers: [
         {
-          ttl: 600000,
-          limit: 1,
+          ttl: envs.ttl,
+          limit: envs.limit,
           blockDuration: 60000,
         },
       ],

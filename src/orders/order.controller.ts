@@ -53,10 +53,16 @@ export class OrdersController {
 
   @Get()
   @Scopes('list-order')
-  @Throttle({ default: { limit: Number(envs.limit), ttl: Number(envs.ttl) } })
   @UseGuards(AuthGuard, SubscriptionGuard, ScopesGuard)
   async findAll(@Req() req, @Query() queryParams: QueryParamDto) {
-    queryParams.parent_id = req.user.parent || req.user.id;
+    const { user } = req;
+
+    queryParams.parent_id = user.parent || user.id;
+    queryParams.type_user = user.type;
+
+    if (user.type !== 'admin') {
+      queryParams.main_user_id = user.id;
+    }
 
     try {
       const orders = await firstValueFrom(
