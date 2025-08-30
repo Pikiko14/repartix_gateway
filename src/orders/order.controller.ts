@@ -27,6 +27,7 @@ import { UpdateStatusDto } from './dto/update-order-status.dto';
 import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
+import { LoadDashboardDataDto } from './dto/load-dashboard-data.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -183,6 +184,20 @@ export class OrdersController {
         this.client.send('create-order-payment', paymentDto),
       );
       return order;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Get('dashboard/data')
+  @Scopes('list-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async loadDashboardData(@Req() req, @Query() queryParams: LoadDashboardDataDto) {
+    try {
+      const dashboardData = await firstValueFrom(
+        this.client.send('load-dashboard-data', queryParams),
+      );
+      return dashboardData;
     } catch (error) {
       throw new RpcException(error);
     }

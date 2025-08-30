@@ -1,3 +1,4 @@
+import helmet from 'helmet';
 import { envs } from './configuration';
 import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
@@ -37,6 +38,8 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  app.use(helmet());
 
   // listem
   await app.listen(envs.port);
