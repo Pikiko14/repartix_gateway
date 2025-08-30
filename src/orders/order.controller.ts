@@ -132,7 +132,7 @@ export class OrdersController {
   }
 
   @Post('news')
-  @Scopes('create-order')
+  @Scopes('update-order')
   @UseGuards(AuthGuard, ScopesGuard)
   @UseInterceptors(FileInterceptor('file'))
   async createNews(
@@ -151,6 +151,33 @@ export class OrdersController {
     try {
       const order = await firstValueFrom(
         this.client.send('create-order-news', createNewsDto),
+      );
+      return order;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Post('payment')
+  @Scopes('update-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async createPayment(
+    @Req() req,
+    @Body() createNewsDto: CreateNewsDto,
+    @UploadedFile() file: any,
+  ) {
+    createNewsDto.parent_id = req.user.parent || req.user.id;
+    if (file) {
+      createNewsDto.file = {
+        filename: file.originalname,
+        mimetype: file.mimetype,
+        buffer: file.buffer.toString('base64'),
+      };
+    }
+    try {
+      const order = await firstValueFrom(
+        this.client.send('create-order-payment', createNewsDto),
       );
       return order;
     } catch (error) {

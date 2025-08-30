@@ -10,6 +10,7 @@ import {
   IsBoolean,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { CreateNewsDto } from './create-news.dto';
 
 export enum StatusEnum {
   pending = 'pending',
@@ -147,6 +148,9 @@ export class PaymentDto {
   @IsOptional()
   @Type(() => Date)
   date: Date;
+
+  @IsOptional()
+  file?: string;
 }
 
 export class ZoneDto {
@@ -289,4 +293,11 @@ export class CreateOrderDto {
   @ValidateNested({ each: true })
   @Type(() => StatusesDto)
   statuses?: StatusesDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateNewsDto)
+  news?: CreateNewsDto[];
+
 }
