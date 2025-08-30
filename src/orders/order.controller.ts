@@ -19,6 +19,7 @@ import { CreateNewsDto } from './dto/create-news.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { AuthGuard } from 'src/commons/guards/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CreatePaymentDto } from './dto/create-payment.dto';
 import { ScopesGuard } from 'src/commons/guards/scopes.guard';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { UpdateStatusDto } from './dto/update-order-status.dto';
@@ -164,12 +165,12 @@ export class OrdersController {
   @UseInterceptors(FileInterceptor('file'))
   async createPayment(
     @Req() req,
-    @Body() createNewsDto: CreateNewsDto,
+    @Body() paymentDto: CreatePaymentDto,
     @UploadedFile() file: any,
   ) {
-    createNewsDto.parent_id = req.user.parent || req.user.id;
+    paymentDto.parent_id = req.user.parent || req.user.id;
     if (file) {
-      createNewsDto.file = {
+      paymentDto.file = {
         filename: file.originalname,
         mimetype: file.mimetype,
         buffer: file.buffer.toString('base64'),
@@ -177,7 +178,7 @@ export class OrdersController {
     }
     try {
       const order = await firstValueFrom(
-        this.client.send('create-order-payment', createNewsDto),
+        this.client.send('create-order-payment', paymentDto),
       );
       return order;
     } catch (error) {
