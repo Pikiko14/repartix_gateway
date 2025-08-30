@@ -21,9 +21,9 @@ export class UpdateStatusDto {
   @IsOptional()
   parent_id: string;
 
-  @IsEnum(StatusEnum)
+  @IsString()
   @IsOptional()
-  status?: StatusEnum;
+  status?: string;
 
   @IsString()
   @IsOptional()
