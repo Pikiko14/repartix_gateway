@@ -26,8 +26,8 @@ import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { UpdateStatusDto } from './dto/update-order-status.dto';
 import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
 import { LoadDashboardDataDto } from './dto/load-dashboard-data.dto';
+import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
 
 @Controller('orders')
 export class OrdersController {
@@ -198,8 +198,21 @@ export class OrdersController {
   @Get('dashboard/data')
   @Scopes('list-order')
   @UseGuards(AuthGuard, ScopesGuard)
-  async loadDashboardData(@Req() req, @Query() queryParams: LoadDashboardDataDto) {
+  async loadDashboardData(
+    @Req() req,
+    @Query() queryParams: LoadDashboardDataDto,
+  ) {
     try {
+      const { user } = req;
+
+      queryParams.parent_id = user.parent || user.id;
+
+      queryParams.type_user = user.type;
+
+      if (user.type !== 'admin') {
+        queryParams.main_user_id = user.id;
+      }
+
       const dashboardData = await firstValueFrom(
         this.client.send('load-dashboard-data', queryParams),
       );
