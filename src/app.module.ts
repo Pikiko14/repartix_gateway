@@ -15,6 +15,7 @@ import { ClientsModule } from './clients/clients.module';
 import { CouriersModule } from './couriers/couriers.module';
 import { ShippingModule } from './shipping/shipping.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { ShippingListModule } from './shipping-list/shipping-list.module';
 import { CustomThrottlerGuard } from './commons/guards/custom-throttler.guard';
 
 @Module({
@@ -45,6 +46,7 @@ import { CustomThrottlerGuard } from './commons/guards/custom-throttler.guard';
     ShippingModule,
     CouriersModule,
     SubscriptionModule,
+    ShippingListModule,
   ],
   controllers: [],
   providers: [
