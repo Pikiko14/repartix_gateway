@@ -1,9 +1,20 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Post,
+  Req,
+  Get,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
 import { AuthGuard } from 'src/commons/guards/auth.guard';
-import { ClientProxy, Payload, RpcException } from '@nestjs/microservices';
+import { ScopesGuard } from 'src/commons/guards/scopes.guard';
+import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { CreateShippingListDto } from './dto/create-shipping-list.dto';
+import { ClientProxy, Payload, RpcException } from '@nestjs/microservices';
+import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 
 @Controller('shipping-list')
 export class ShippingListController {
@@ -13,7 +24,8 @@ export class ShippingListController {
   ) {}
 
   @Post()
-  @UseGuards(AuthGuard)
+  @Scopes('create-shipping-list')
+  @UseGuards(AuthGuard, ScopesGuard)
   async quoteShipping(
     @Req() req,
     @Payload() createShippingDto: CreateShippingListDto,
@@ -24,6 +36,23 @@ export class ShippingListController {
 
       const sgippingList = await firstValueFrom(
         this.client.send('create-shipping-list', createShippingDto),
+      );
+      return sgippingList;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Get()
+  @Scopes('create-shipping-list')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async listShipping(@Req() req, @Query() queryParamDto: QueryParamDto) {
+    try {
+      const parent = req.user.parent || req.user.id;
+      queryParamDto.parent_id = parent;
+
+      const sgippingList = await firstValueFrom(
+        this.client.send('find-all-shipping-list', queryParamDto),
       );
       return sgippingList;
     } catch (error) {
