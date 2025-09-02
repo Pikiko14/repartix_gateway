@@ -4,8 +4,10 @@ import {
   Post,
   Req,
   Get,
+  Delete,
   UseGuards,
   Query,
+  Param,
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
@@ -55,6 +57,23 @@ export class ShippingListController {
         this.client.send('find-all-shipping-list', queryParamDto),
       );
       return sgippingList;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Delete(':id')
+  @Scopes('create-shipping-list')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async deleteShippingList(@Req() req, @Param('id') id: string) {
+    try {
+      const shippingList = await firstValueFrom(
+        this.client.send('remove-shipping-list', {
+          id,
+          parent_id: req.user.parent || req.user.id,
+        }),
+      );
+      return shippingList;
     } catch (error) {
       throw new RpcException(error);
     }
