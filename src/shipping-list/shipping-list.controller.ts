@@ -28,7 +28,7 @@ export class ShippingListController {
   @Post()
   @Scopes('create-shipping-list')
   @UseGuards(AuthGuard, ScopesGuard)
-  async quoteShipping(
+  async createShippingList(
     @Req() req,
     @Payload() createShippingDto: CreateShippingListDto,
   ) {
@@ -46,29 +46,46 @@ export class ShippingListController {
   }
 
   @Get()
-  @Scopes('create-shipping-list')
+  @Scopes('list-shipping-list')
   @UseGuards(AuthGuard, ScopesGuard)
-  async listShipping(@Req() req, @Query() queryParamDto: QueryParamDto) {
+  async listShippingList(@Req() req, @Query() queryParamDto: QueryParamDto) {
     try {
       const parent = req.user.parent || req.user.id;
       queryParamDto.parent_id = parent;
 
-      const sgippingList = await firstValueFrom(
+      const shippingList = await firstValueFrom(
         this.client.send('find-all-shipping-list', queryParamDto),
       );
-      return sgippingList;
+      return shippingList;
     } catch (error) {
       throw new RpcException(error);
     }
   }
 
   @Delete(':id')
-  @Scopes('create-shipping-list')
+  @Scopes('delete-shipping-list')
   @UseGuards(AuthGuard, ScopesGuard)
   async deleteShippingList(@Req() req, @Param('id') id: string) {
     try {
       const shippingList = await firstValueFrom(
         this.client.send('remove-shipping-list', {
+          id,
+          parent_id: req.user.parent || req.user.id,
+        }),
+      );
+      return shippingList;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Get(':id')
+  @Scopes('list-shipping-list')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async getShippingList(@Req() req, @Param('id') id: string) {
+    try {
+      const shippingList = await firstValueFrom(
+        this.client.send('find-one-shipping-list', {
           id,
           parent_id: req.user.parent || req.user.id,
         }),
