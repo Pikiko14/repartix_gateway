@@ -8,15 +8,17 @@ import {
   UseGuards,
   Query,
   Param,
+  Put,
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
 import { AuthGuard } from 'src/commons/guards/auth.guard';
 import { ScopesGuard } from 'src/commons/guards/scopes.guard';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
+import { QueryParamDto } from 'src/commons/dto/query-params.dto';
+import { UpdateShippingListDto } from './dto/update-shipping-list.dto';
 import { CreateShippingListDto } from './dto/create-shipping-list.dto';
 import { ClientProxy, Payload, RpcException } from '@nestjs/microservices';
-import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 
 @Controller('shipping-list')
 export class ShippingListController {
@@ -36,10 +38,30 @@ export class ShippingListController {
       const parent = req.user.parent || req.user.id;
       createShippingDto.parent_id = parent;
 
-      const sgippingList = await firstValueFrom(
+      const shippingList = await firstValueFrom(
         this.client.send('create-shipping-list', createShippingDto),
       );
-      return sgippingList;
+      return shippingList;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Put(':id')
+  @Scopes('update-shipping-list')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async updateShippingList(
+    @Req() req,
+    @Payload() updateShippingList: UpdateShippingListDto,
+  ) {
+    try {
+      const parent = req.user.parent || req.user.id;
+      updateShippingList.parent_id = parent;
+
+      const shippingList = await firstValueFrom(
+        this.client.send('update-shipping-list', updateShippingList),
+      );
+      return shippingList;
     } catch (error) {
       throw new RpcException(error);
     }
