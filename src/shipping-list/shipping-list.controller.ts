@@ -63,7 +63,6 @@ export class ShippingListController {
           orders.push(order);
         }
       }
-      console.log(orders);
       createShippingDto.orders = orders;
       
       // set parent id
