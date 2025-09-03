@@ -17,7 +17,7 @@ import { ScopesGuard } from 'src/commons/guards/scopes.guard';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 import { UpdateShippingListDto } from './dto/update-shipping-list.dto';
-import { CreateShippingListDto } from './dto/create-shipping-list.dto';
+import { CreateShippingListDto, OrderDto } from './dto/create-shipping-list.dto';
 import { ClientProxy, Payload, RpcException } from '@nestjs/microservices';
 
 @Controller('shipping-list')
@@ -30,11 +30,43 @@ export class ShippingListController {
   @Post()
   @Scopes('create-shipping-list')
   @UseGuards(AuthGuard, ScopesGuard)
-  async createShippingList(
-    @Req() req,
-    @Payload() createShippingDto: CreateShippingListDto,
-  ) {
+  async createShippingList(@Req() req, @Payload() createShippingDto: CreateShippingListDto) {
     try {
+      // get and prepare orders data
+      const { ordersIds } = createShippingDto;
+      delete createShippingDto.ordersIds;
+      const ordersData = await firstValueFrom(
+        this.client.send('get-orders-by-id-array', ordersIds),
+      );
+
+      const orders: OrderDto[] = [];
+      if (ordersData && ordersData.length > 0) {
+        for (const orderObj of ordersData) {
+          const order: OrderDto = {
+            id: orderObj._id,
+            reference: orderObj.reference,
+            client:  {
+              name: orderObj.client.name,
+              last_name: orderObj.client?.last_name,
+              address: orderObj?.client?.address,
+              phone: orderObj?.client?.phone
+            },
+            sender: {
+              brand_name: orderObj?.sender?.brand_name,
+              brand_phone: orderObj?.sender?.brand_phone
+            },
+            status: orderObj.status,
+            order_price: `${orderObj.order_price}`,
+            cash_on_delivery: orderObj.cash_on_delivery,
+            cash_amount: orderObj.cash_amount
+          }
+          orders.push(order);
+        }
+      }
+      console.log(orders);
+      createShippingDto.orders = orders;
+      
+      // set parent id
       const parent = req.user.parent || req.user.id;
       createShippingDto.parent_id = parent;
 
