@@ -148,4 +148,21 @@ export class ShippingListController {
       throw new RpcException(error);
     }
   }
+
+  @Get(':id/print-pdf')
+  @Scopes('list-shipping-list')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async printPdf(@Req() req, @Param('id') id: string) {
+    try {
+      const shippingList = await firstValueFrom(
+        this.client.send('print-shipping-list-pdf', {
+          id,
+          parent_id: req.user.parent || req.user.id,
+        }),
+      );
+      return shippingList;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
 }
