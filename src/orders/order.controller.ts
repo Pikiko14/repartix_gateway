@@ -117,6 +117,8 @@ export class OrdersController {
     updateOrderDto.id = id;
     updateOrderDto.parent_id = req.user.parent || req.user.id;
 
+    updateOrderDto.user_request_id = req.user.id;
+
     try {
       const order = await firstValueFrom(
         this.client.send('update-order', updateOrderDto),
