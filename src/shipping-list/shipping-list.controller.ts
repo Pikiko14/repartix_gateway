@@ -176,7 +176,7 @@ export class ShippingListController {
 
     try {
       const order = await firstValueFrom(
-        this.client.send('close-shipping', updateOrderDto),
+        this.client.send('close-shipping-list', updateOrderDto),
       );
       return order;
     } catch (error) {
