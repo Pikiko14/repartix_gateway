@@ -225,4 +225,20 @@ export class OrdersController {
       throw new RpcException(error);
     }
   }
+
+  @Put(':id/close')
+  @Scopes('update-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async closeOrder(@Req() req, @Body() updateOrderDto: UpdateStatusDto) {
+    updateOrderDto.parent_id = req.user.parent || req.user.id;
+
+    try {
+      const order = await firstValueFrom(
+        this.client.send('close-order', updateOrderDto),
+      );
+      return order;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
 }
