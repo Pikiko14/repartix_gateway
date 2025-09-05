@@ -158,6 +158,7 @@ export class ShippingListController {
         this.client.send('print-shipping-list-pdf', {
           id,
           parent_id: req.user.parent || req.user.id,
+          user_id: req.user.id,
         }),
       );
       return shippingList;
