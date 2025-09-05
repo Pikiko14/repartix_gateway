@@ -41,6 +41,8 @@ export class OrdersController {
   async create(@Req() req, @Body() createOrderDto: CreateOrderDto) {
     createOrderDto.parent_id = req.user.parent || req.user.id;
 
+    createOrderDto.user_request_id = req.user.id;
+
     try {
       const order = await firstValueFrom(
         this.client.send('create-order', createOrderDto),
