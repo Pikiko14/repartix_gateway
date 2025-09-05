@@ -9,6 +9,7 @@ import {
   Query,
   Param,
   Put,
+  Body,
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
@@ -17,8 +18,8 @@ import { ScopesGuard } from 'src/commons/guards/scopes.guard';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 import { UpdateShippingListDto } from './dto/update-shipping-list.dto';
-import { CreateShippingListDto, OrderDto } from './dto/create-shipping-list.dto';
 import { ClientProxy, Payload, RpcException } from '@nestjs/microservices';
+import { CreateShippingListDto, OrderDto } from './dto/create-shipping-list.dto';
 
 @Controller('shipping-list')
 export class ShippingListController {
@@ -162,6 +163,22 @@ export class ShippingListController {
         }),
       );
       return shippingList;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Put(':id/close')
+  @Scopes('update-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async closeOrder(@Req() req, @Body() updateOrderDto: UpdateShippingListDto) {
+    updateOrderDto.parent_id = req.user.parent || req.user.id;
+
+    try {
+      const order = await firstValueFrom(
+        this.client.send('close-shipping', updateOrderDto),
+      );
+      return order;
     } catch (error) {
       throw new RpcException(error);
     }
