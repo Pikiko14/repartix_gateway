@@ -22,6 +22,7 @@ import { AuthGuard } from 'src/commons/guards/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { ScopesGuard } from 'src/commons/guards/scopes.guard';
+import { LiquidateOrderDto } from './dto/liquidate-orders.dto';
 import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { UpdateStatusDto } from './dto/update-order-status.dto';
 import { QueryParamDto } from 'src/commons/dto/query-params.dto';
@@ -221,6 +222,27 @@ export class OrdersController {
         this.client.send('load-dashboard-data', queryParams),
       );
       return dashboardData;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Put('liquidate/money')
+  @Scopes('update-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async liquidateOrders(
+    @Req() req,
+    @Body() liquidateOrderDto: LiquidateOrderDto,
+  ) {
+    try {
+      const { user } = req;
+
+      liquidateOrderDto.parent_id = user.parent || user.id;
+
+      const orders = await firstValueFrom(
+        this.client.send('liquidate-order', liquidateOrderDto),
+      );
+      return orders;
     } catch (error) {
       throw new RpcException(error);
     }

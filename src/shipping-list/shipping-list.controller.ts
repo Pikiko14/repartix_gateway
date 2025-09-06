@@ -183,4 +183,18 @@ export class ShippingListController {
       throw new RpcException(error);
     }
   }
+
+  @Put('/create/shipping/routes')
+  @Scopes('create-shipping-list')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async generateRouter(@Req() req, @Body() createRoutes: any) {
+    try {
+      // set parent id
+      const parent = req.user.parent || req.user.id;
+      createRoutes.parent_id = parent;
+      return createRoutes;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
 }
