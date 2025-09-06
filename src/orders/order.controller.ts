@@ -27,6 +27,7 @@ import { Scopes } from 'src/commons/decorators/scope.decorator';
 import { UpdateStatusDto } from './dto/update-order-status.dto';
 import { QueryParamDto } from 'src/commons/dto/query-params.dto';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { QueryReportDto } from 'src/commons/dto/query-report.dto';
 import { LoadDashboardDataDto } from './dto/load-dashboard-data.dto';
 import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
 
@@ -243,6 +244,26 @@ export class OrdersController {
         this.client.send('liquidate-order', liquidateOrderDto),
       );
       return orders;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Get('report/diary')
+  @Scopes('list-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async diaryReport(@Req() req, @Query() queryReportDto: QueryReportDto) {
+    try {
+      queryReportDto.parent_id = req.user.parent || req.user.id;
+
+      try {
+        const orderDiaryReport = await firstValueFrom(
+          this.client.send('order-diary-report', queryReportDto),
+        );
+        return orderDiaryReport;
+      } catch (error) {
+        throw new RpcException(error);
+      }
     } catch (error) {
       throw new RpcException(error);
     }
