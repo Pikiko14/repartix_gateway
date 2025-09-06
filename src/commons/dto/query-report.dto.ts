@@ -6,4 +6,7 @@ export class QueryReportDto {
 
   @IsOptional()
   parent_id?: string;
+
+  @IsOptional()
+  courier?: string;
 }
