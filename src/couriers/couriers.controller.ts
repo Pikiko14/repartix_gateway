@@ -97,4 +97,19 @@ export class CouriersController {
       throw new RpcException(error);
     }
   }
+
+  @Get('for/select')
+  @Scopes('list-couriers')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async listForSelect(@Req() req, @Query() queryParams: QueryParamDto) {
+    queryParams.parent_id = req.user.parent || req.user.id;
+    try {
+      const couriers = await firstValueFrom(
+        this.client.send('find-couriers-for-select', queryParams),
+      );
+      return couriers;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
 }
