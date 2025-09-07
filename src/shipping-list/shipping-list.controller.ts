@@ -69,6 +69,8 @@ export class ShippingListController {
       // set parent id
       const parent = req.user.parent || req.user.id;
       createShippingDto.parent_id = parent;
+      createShippingDto.user_request_id = req.user.id;
+
 
       const shippingList = await firstValueFrom(
         this.client.send('create-shipping-list', createShippingDto),
