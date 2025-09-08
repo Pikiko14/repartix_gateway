@@ -30,6 +30,7 @@ export class ShippingController {
       if (configuration) {
         createShippingDto.price_by_km = configuration?.price_by_km || 0;
         createShippingDto.shippingMethod = configuration?.route_price_by_km ? 'by-km' : 'cities-and-zones';
+        createShippingDto.insurance_porcentage = configuration?.insurance_percentage || 0;
       }
 
       const quoteShipping = await firstValueFrom(
