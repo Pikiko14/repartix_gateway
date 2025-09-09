@@ -51,7 +51,11 @@ export class OrdersController {
       );
       return order;
     } catch (error) {
-      throw new RpcException(error);
+      throw new RpcException({
+        message: error.message,
+        statusCode: error.code,
+        error: error.name,
+      });
     }
   }
 
@@ -253,19 +257,39 @@ export class OrdersController {
   @Scopes('list-order')
   @UseGuards(AuthGuard, ScopesGuard)
   async diaryReport(@Req() req, @Query() queryReportDto: QueryReportDto) {
+    queryReportDto.parent_id = req.user.parent || req.user.id;
+
+    try {
+      const orderDiaryReport = await firstValueFrom(
+        this.client.send('order-diary-report', queryReportDto),
+      );
+      return orderDiaryReport;
+    } catch (error) {
+      throw new RpcException({
+        message: error.message,
+        statusCode: error.code,
+        error: error.name,
+      });
+    }
+  }
+
+  @Get('report/liquidation')
+  @Scopes('list-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async reportLiquidation(@Req() req, @Query() queryReportDto: QueryReportDto) {
     try {
       queryReportDto.parent_id = req.user.parent || req.user.id;
 
-      try {
-        const orderDiaryReport = await firstValueFrom(
-          this.client.send('order-diary-report', queryReportDto),
-        );
-        return orderDiaryReport;
-      } catch (error) {
-        throw new RpcException(error);
-      }
+      const orderLiquidationReport = await firstValueFrom(
+        this.client.send('order-liquidation-report', queryReportDto),
+      );
+      return orderLiquidationReport;
     } catch (error) {
-      throw new RpcException(error);
+      throw new RpcException({
+        message: error.message,
+        statusCode: error.code,
+        error: error.name,
+      });
     }
   }
 }
