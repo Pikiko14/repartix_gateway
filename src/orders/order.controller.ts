@@ -140,6 +140,7 @@ export class OrdersController {
   @UseGuards(AuthGuard, ScopesGuard)
   async updateStatus(@Req() req, @Body() updateOrderDto: UpdateStatusDto) {
     updateOrderDto.parent_id = req.user.parent || req.user.id;
+    updateOrderDto.user_request_id = req.user.id;
 
     try {
       const order = await firstValueFrom(
@@ -161,6 +162,7 @@ export class OrdersController {
     @UploadedFile() file: any,
   ) {
     createNewsDto.parent_id = req.user.parent || req.user.id;
+    createNewsDto.user_request_id = req.user.id;
     if (file) {
       createNewsDto.file = {
         filename: file.originalname,
@@ -188,6 +190,7 @@ export class OrdersController {
     @UploadedFile() file: any,
   ) {
     paymentDto.parent_id = req.user.parent || req.user.id;
+    paymentDto.user_request_id = req.user.id;
     if (file) {
       paymentDto.file = {
         filename: file.originalname,
