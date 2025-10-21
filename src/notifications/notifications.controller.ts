@@ -26,7 +26,7 @@ export class NotificationsController {
 
   @Get()
   async getNotifications(@Query() query: GetNotificationsQueryDto, @Req() req: any) {
-    const parent_id = req.user?.parent_id;
+    const parent_id = req.user?.parent || req.user?.id;
     
     const response = await firstValueFrom(
       this.client.send('get-internal-notifications', {
@@ -42,7 +42,7 @@ export class NotificationsController {
 
   @Get('unread-count')
   async getUnreadCount(@Req() req: any) {
-    const parent_id = req.user?.parent_id;
+    const parent_id = req.user?.parent || req.user?.id;
     
     const response = await firstValueFrom(
       this.client.send('count-unread-notifications', { parent_id }),
@@ -53,7 +53,7 @@ export class NotificationsController {
 
   @Post('mark-as-read')
   async markAsRead(@Body() markAsReadDto: MarkAsReadDto, @Req() req: any) {
-    const parent_id = req.user?.parent_id;
+    const parent_id = req.user?.parent || req.user?.id;
     
     const response = await firstValueFrom(
       this.client.send('mark-notification-as-read', {
@@ -67,7 +67,7 @@ export class NotificationsController {
 
   @Post('mark-all-as-read')
   async markAllAsRead(@Req() req: any) {
-    const parent_id = req.user?.parent_id;
+    const parent_id = req.user?.parent || req.user?.id;
     
     const response = await firstValueFrom(
       this.client.send('mark-all-notifications-as-read', { parent_id }),
@@ -78,7 +78,7 @@ export class NotificationsController {
 
   @Delete(':notification_id')
   async deleteNotification(@Param('notification_id') notification_id: string, @Req() req: any) {
-    const parent_id = req.user?.parent_id;
+    const parent_id = req.user?.parent || req.user?.id;
     
     const response = await firstValueFrom(
       this.client.send('delete-notification', {
