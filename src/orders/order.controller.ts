@@ -30,6 +30,7 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { QueryReportDto } from 'src/commons/dto/query-report.dto';
 import { LoadDashboardDataDto } from './dto/load-dashboard-data.dto';
 import { SubscriptionGuard } from 'src/commons/guards/subscription.guard';
+import { GenerateReportPdfDto } from './dto/generate-report-pdf.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -287,6 +288,31 @@ export class OrdersController {
         this.client.send('order-liquidation-report', queryReportDto),
       );
       return orderLiquidationReport;
+    } catch (error) {
+      throw new RpcException({
+        message: error.message,
+        statusCode: error.code,
+        error: error.name,
+      });
+    }
+  }
+
+  @Post('report/generate-pdf')
+  @Scopes('list-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async generateReportPdf(@Req() req, @Body() generateReportPdfDto: GenerateReportPdfDto) {
+    try {
+      const parent_id = req.user.parent || req.user.id;
+      const user_request_id = req.user.id;
+
+      const result = await firstValueFrom(
+        this.client.send('generate-report-pdf', {
+          ...generateReportPdfDto,
+          parent_id,
+          user_request_id,
+        }),
+      );
+      return result;
     } catch (error) {
       throw new RpcException({
         message: error.message,
