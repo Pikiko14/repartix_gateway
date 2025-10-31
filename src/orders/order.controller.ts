@@ -12,7 +12,9 @@ import {
   Put,
   UseInterceptors,
   UploadedFile,
+  UsePipes,
 } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
 import { Throttle } from '@nestjs/throttler';
@@ -83,22 +85,6 @@ export class OrdersController {
     }
   }
 
-  @Get(':id')
-  @Scopes('list-order')
-  @UseGuards(AuthGuard, ScopesGuard)
-  async findOne(@Req() req, @Param('id') id: string) {
-    try {
-      const order = await firstValueFrom(
-        this.client.send('find-order', {
-          id,
-          parent_id: req.user.parent || req.user.id,
-        }),
-      );
-      return order;
-    } catch (error) {
-      throw new RpcException(error);
-    }
-  }
 
   @Delete(':id')
   @Scopes('delete-order')
@@ -277,6 +263,44 @@ export class OrdersController {
     }
   }
 
+  @Get('report/performance')
+  @Scopes('list-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: false, forbidNonWhitelisted: false }))
+  async performanceReport(@Req() req, @Query() queryParams: any) {
+    try {
+      const parent_id = req.user.parent || req.user.id;
+      
+      // Construir el objeto con los parámetros transformados
+      const performanceReportDto: any = {
+        parent_id,
+      };
+      
+      if (queryParams.from) {
+        performanceReportDto.from = queryParams.from;
+      }
+      
+      if (queryParams.to) {
+        performanceReportDto.to = queryParams.to;
+      }
+      
+      if (queryParams.courier) {
+        performanceReportDto.courier = queryParams.courier;
+      }
+      
+      const result = await firstValueFrom(
+        this.client.send('performance-report', performanceReportDto),
+      );
+      return result;
+    } catch (error) {
+      throw new RpcException({
+        message: error.message,
+        statusCode: error.code,
+        error: error.name,
+      });
+    }
+  }
+
   @Get('report/liquidation')
   @Scopes('list-order')
   @UseGuards(AuthGuard, ScopesGuard)
@@ -319,6 +343,23 @@ export class OrdersController {
         statusCode: error.code,
         error: error.name,
       });
+    }
+  }
+
+  @Get(':id')
+  @Scopes('list-order')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async findOne(@Req() req, @Param('id') id: string) {
+    try {
+      const order = await firstValueFrom(
+        this.client.send('find-order', {
+          id,
+          parent_id: req.user.parent || req.user.id,
+        }),
+      );
+      return order;
+    } catch (error) {
+      throw new RpcException(error);
     }
   }
 }
