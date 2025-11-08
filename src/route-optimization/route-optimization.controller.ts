@@ -38,7 +38,7 @@ export class RouteOptimizationController {
   }
 
   @Get('optimize')
-  @Scopes('optimize-route')
+  @Scopes('list-shipping-list')
   @UseGuards(AuthGuard, ScopesGuard)
   async getOptimizedRoute(@Req() req, @Query() query: { shipping_list_id: string; route_type?: string }) {
     try {
