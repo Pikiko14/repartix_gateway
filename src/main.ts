@@ -17,10 +17,20 @@ async function bootstrap() {
 
   // enable cors
   const corsOptions: CorsOptions = {
-    origin: [
-      'http://localhost:9000',
-      'http://localhost:9001'
-    ],
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        'http://localhost:9000',
+        'http://localhost:9001',
+        'http://10.0.2.2:3000',
+        'http://127.0.0.1:3000',
+      ];
+      
+      if (!origin || allowedOrigins.includes(origin) || origin.startsWith('http://192.168.') || origin.startsWith('http://10.0.') || origin.startsWith('http://172.')) {
+        callback(null, true);
+      } else {
+        callback(null, true);
+      }
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     optionsSuccessStatus: 204,
