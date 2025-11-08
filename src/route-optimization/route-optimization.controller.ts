@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req, UseGuards, Inject, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Req, UseGuards, Inject, Get, Query, Delete, Param } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { envs } from 'src/configuration';
 import { AuthGuard } from 'src/commons/guards/auth.guard';
@@ -38,7 +38,7 @@ export class RouteOptimizationController {
   }
 
   @Get('optimize')
-  @Scopes('list-shipping-list')
+  @Scopes('view-optimized-route')
   @UseGuards(AuthGuard, ScopesGuard)
   async getOptimizedRoute(@Req() req, @Query() query: { shipping_list_id: string; route_type?: string }) {
     try {
@@ -59,9 +59,9 @@ export class RouteOptimizationController {
   }
 
   @Get()
-  @Scopes('optimize-route')
+  @Scopes('list-optimized-route')
   @UseGuards(AuthGuard, ScopesGuard)
-  async listRoutes(@Req() req, @Query() query: { page?: string; perPage?: string; search?: string }) {
+  async listRoutes(@Req() req, @Query() query: { page?: string; perPage?: string; search?: string; route_type?: string; shipping_list_id?: string }) {
     try {
       const parent = req.user.parent || req.user.id;
       
@@ -71,6 +71,28 @@ export class RouteOptimizationController {
           page: query.page ? parseInt(query.page) : 1,
           perPage: query.perPage ? parseInt(query.perPage) : 10,
           search: query.search,
+          route_type: query.route_type,
+          shipping_list_id: query.shipping_list_id,
+        }),
+      );
+
+      return result;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Delete(':id')
+  @Scopes('optimize-route')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async deleteRoute(@Req() req, @Param('id') id: string) {
+    try {
+      const parent = req.user.parent || req.user.id;
+      
+      const result = await firstValueFrom(
+        this.client.send('delete-optimized-route', {
+          route_id: id,
+          parent_id: parent,
         }),
       );
 
