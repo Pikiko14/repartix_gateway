@@ -36,5 +36,9 @@ export class OptimizeRouteDto {
     lng: number;
     address?: string;
   };
+
+  @IsOptional()
+  @IsString()
+  route_type?: 'pickup' | 'delivery';
 }
 

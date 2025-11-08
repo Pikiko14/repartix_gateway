@@ -57,5 +57,27 @@ export class RouteOptimizationController {
       throw new RpcException(error);
     }
   }
+
+  @Get()
+  @Scopes('optimize-route')
+  @UseGuards(AuthGuard, ScopesGuard)
+  async listRoutes(@Req() req, @Query() query: { page?: string; perPage?: string; search?: string }) {
+    try {
+      const parent = req.user.parent || req.user.id;
+      
+      const result = await firstValueFrom(
+        this.client.send('list-optimized-routes', {
+          parent_id: parent,
+          page: query.page ? parseInt(query.page) : 1,
+          perPage: query.perPage ? parseInt(query.perPage) : 10,
+          search: query.search,
+        }),
+      );
+
+      return result;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
 }
 
