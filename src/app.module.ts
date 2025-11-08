@@ -17,6 +17,7 @@ import { ShippingModule } from './shipping/shipping.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { ShippingListModule } from './shipping-list/shipping-list.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { RouteOptimizationModule } from './route-optimization/route-optimization.module';
 import { CustomThrottlerGuard } from './commons/guards/custom-throttler.guard';
 
 @Module({
@@ -49,6 +50,7 @@ import { CustomThrottlerGuard } from './commons/guards/custom-throttler.guard';
     SubscriptionModule,
     ShippingListModule,
     NotificationsModule,
+    RouteOptimizationModule,
   ],
   controllers: [],
   providers: [
